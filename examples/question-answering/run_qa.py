@@ -683,7 +683,6 @@ def main():
         return {
             "learning_rate": trial.suggest_categorical("learning_rate",[1e-3,5e-3,1e-2,5e-2]),
             "seed":trial.suggest_categorical("seed", [25,38,42,87]),
-            "per_device_train_batch_size":trial.suggest_categorical("per_device_train_batch_size",[8,16]),
             "num_train_epochs":trial.suggest_categorical("num_train_epochs",[5,10,15]),
             "warmup_ratio":trial.suggest_categorical("warmup_ratio",[0,0.1,0.2]),
             "lr_scheduler_type":trial.suggest_categorical("lr_scheduler_type", ['linear', 'cosine', 'cosine_with_restarts']),
@@ -693,7 +692,7 @@ def main():
         direction="maximize", 
         backend="optuna", 
         hp_space=my_hp_space_optuna,
-        n_trials=1,
+        n_trials=20,
     )
 
     best_run_hp = best_run.hyperparameters
@@ -705,7 +704,6 @@ def main():
     training_args.learning_rate = best_run_hp["learning_rate"]
     training_args.num_train_epochs = best_run_hp["num_train_epochs"]
     training_args.seed = best_run_hp["seed"]
-    training_args.per_device_train_batch_size = best_run_hp["per_device_train_batch_size"]
     training_args.lr_scheduler_type = best_run_hp["lr_scheduler_type"]
     training_args.warmup_ratio = best_run_hp["warmup_ratio"]
 
