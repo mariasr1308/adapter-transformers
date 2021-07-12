@@ -263,7 +263,7 @@ def main():
     # download the dataset.
     if data_args.dataset_name is not None:
         # Downloading and loading a dataset from the hub.
-        datasets_eval = load_dataset(data_args.dataset_name, data_args.dataset_config_name, split=['train[:2%]', 'validation[:3%]'])
+        datasets_eval = load_dataset(data_args.dataset_name, data_args.dataset_config_name, split=['train[:2%]', 'validation[:8%]'])
 #         datasets = DatasetDict({"train": datasets[0], "validation": datasets[1]})
         
         
@@ -693,7 +693,7 @@ def main():
         direction="maximize", 
         backend="optuna", 
         hp_space=my_hp_space_optuna,
-        n_trials=3,
+        n_trials=1,
     )
 
     best_run_hp = best_run.hyperparameters
