@@ -693,7 +693,7 @@ def main():
         backend="optuna", 
         hp_space=my_hp_space_optuna,
         n_trials=20,
-        sampler=optuna.samplers.RandomSampler,
+        sampler=optuna.samplers.RandomSampler(),
     )
 
     best_run_hp = best_run.hyperparameters
