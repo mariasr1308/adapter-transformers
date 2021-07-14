@@ -86,6 +86,10 @@ class ModelArguments:
             "with private models)."
         },
     )
+    do_hp_search: bool = field(
+        default=False,
+        metadata={"help": "Whether to perform a hyperparameter search before training the model"},
+    )
 
 
 @dataclass
@@ -677,52 +681,55 @@ def main():
         do_save_full_model=not adapter_args.train_adapter,
         do_save_adapters=adapter_args.train_adapter,
     )
-
-    # Tuning Hyperparameters
-    def my_hp_space_optuna(trial):
-        return {
-            "learning_rate": trial.suggest_categorical("learning_rate",[1e-3,5e-3,1e-2,5e-2]),
-            "seed":trial.suggest_categorical("seed", [25,38,42,87]),
-            "num_train_epochs":trial.suggest_categorical("num_train_epochs",[5,10,15]),
-            "warmup_ratio":trial.suggest_categorical("warmup_ratio",[0,0.1,0.2]),
-            "lr_scheduler_type":trial.suggest_categorical("lr_scheduler_type", ['linear', 'cosine', 'cosine_with_restarts']),
-        }
     
-    best_run = trainer.hyperparameter_search(
-        direction="maximize", 
-        backend="optuna", 
-        hp_space=my_hp_space_optuna,
-        n_trials=20,
-        sampler=optuna.samplers.RandomSampler(),
-    )
+    if model_args.do_hp_search:
+        
+        # Tuning Hyperparameters
+        def my_hp_space_optuna(trial):
+            return {
+                "learning_rate": trial.suggest_categorical("learning_rate",[1e-3,5e-3,1e-2,5e-2]),
+                "seed":trial.suggest_categorical("seed", [25,38,42,87]),
+                "num_train_epochs":trial.suggest_categorical("num_train_epochs",[5,10,15]),
+                "warmup_ratio":trial.suggest_categorical("warmup_ratio",[0,0.1,0.2]),
+                "lr_scheduler_type":trial.suggest_categorical("lr_scheduler_type", ['linear', 'cosine', 'cosine_with_restarts']),
+            }
 
-    best_run_hp = best_run.hyperparameters
-    print("Hyperparameter Search Completed")
-    print(best_run)
-    print()
-    
-    # Redefine training args with results from best run of HP search
-    training_args.learning_rate = best_run_hp["learning_rate"]
-    training_args.num_train_epochs = best_run_hp["num_train_epochs"]
-    training_args.seed = best_run_hp["seed"]
-    training_args.lr_scheduler_type = best_run_hp["lr_scheduler_type"]
-    training_args.warmup_ratio = best_run_hp["warmup_ratio"]
+        best_run = trainer.hyperparameter_search(
+            direction="maximize", 
+            backend="optuna", 
+            hp_space=my_hp_space_optuna,
+            n_trials=20,
+            sampler=optuna.samplers.RandomSampler(),
+        )
 
-    
-    # Populate training args with best HP search results
-    trainer = QuestionAnsweringTrainer(
-        model_init=model_init,
-        args=training_args,
-        train_dataset=train_dataset if training_args.do_train else None,
-        eval_dataset=eval_dataset if training_args.do_eval else None,
-        eval_examples=eval_examples if training_args.do_eval else None,
-        tokenizer=tokenizer,
-        data_collator=data_collator,
-        post_process_function=post_processing_function,
-        compute_metrics=compute_metrics,
-        do_save_full_model=not adapter_args.train_adapter,
-        do_save_adapters=adapter_args.train_adapter,
-    )
+        best_run_hp = best_run.hyperparameters
+        print("Hyperparameter Search Completed")
+        print(best_run)
+        print()
+
+        # Redefine training args with results from best run of HP search
+        training_args.learning_rate = best_run_hp["learning_rate"]
+        training_args.num_train_epochs = best_run_hp["num_train_epochs"]
+        training_args.seed = best_run_hp["seed"]
+        training_args.lr_scheduler_type = best_run_hp["lr_scheduler_type"]
+        training_args.warmup_ratio = best_run_hp["warmup_ratio"]
+
+
+        # Redefine trainer with training args from best HP search results
+        trainer = QuestionAnsweringTrainer(
+            model_init=model_init,
+            args=training_args,
+            train_dataset=train_dataset if training_args.do_train else None,
+            eval_dataset=eval_dataset if training_args.do_eval else None,
+            eval_examples=eval_examples if training_args.do_eval else None,
+            tokenizer=tokenizer,
+            data_collator=data_collator,
+            post_process_function=post_processing_function,
+            compute_metrics=compute_metrics,
+            do_save_full_model=not adapter_args.train_adapter,
+            do_save_adapters=adapter_args.train_adapter,
+        )
+        
     
     # Training
     if training_args.do_train:
