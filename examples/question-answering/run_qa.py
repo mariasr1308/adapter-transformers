@@ -19,7 +19,6 @@ Fine-tuning the library models for question answering.
 """
 # You can also adapt this script on your own question answering task. Pointers for this are left as comments.
 import optuna
-import tqdm
 import logging
 import os
 import sys
