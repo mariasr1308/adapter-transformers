@@ -372,7 +372,7 @@ def main():
     #                     non_linearity=adapter_args.adapter_non_linearity,
     #                     reduction_factor=adapter_args.adapter_reduction_factor,
     #                 )
-                      adapter_config = generate_adapter_config(switch)
+                    adapter_config = generate_adapter_config(switch)
                     # load adapter from hub if specified
                     if adapter_args.load_adapter:
                         model.load_adapter(adapter_args.load_adapter, config=adapter_config, load_as=task_name)
