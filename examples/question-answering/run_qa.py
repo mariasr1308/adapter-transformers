@@ -240,7 +240,7 @@ def main():
  
     switch1 = [True, True, True, False, False, False, True, True]
     switches = list([switch1])
-    
+    base_dir = training_args.output_dir
     for switch in switches:
         training_args.output_dir = base_dir + "_" + "_".join([str(int(s)) for s in switch])
         
