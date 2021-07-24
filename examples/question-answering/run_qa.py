@@ -238,7 +238,7 @@ def main():
         
     
  
-    switch1 = [True, True, True, False, False, False, True, True]
+    switch1 = [True, True, True, True, False, False, True, True]
     switches = list([switch1])
     base_dir = training_args.output_dir
     for switch in switches:
@@ -754,7 +754,7 @@ def main():
 
                 # Redefine training args with results from best run of HP search
                 training_args.learning_rate = best_run_hp["learning_rate"]
-                training_args.num_train_epochs = best_run_hp["num_train_epochs"]
+#                 training_args.num_train_epochs = best_run_hp["num_train_epochs"]
                 training_args.seed = best_run_hp["seed"]
                 training_args.lr_scheduler_type = best_run_hp["lr_scheduler_type"]
                 training_args.warmup_ratio = best_run_hp["warmup_ratio"]
