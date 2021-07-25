@@ -90,6 +90,10 @@ class ModelArguments:
         default=False,
         metadata={"help": "Whether to perform a hyperparameter search before training the model"},
     )
+    adapter_switch_type: str = field(
+        default="A1",
+        metadata={"help": "which of the best 4 adapter switches to use"},
+    )
 
 
 
@@ -237,8 +241,15 @@ def main():
         return adapter_config
         
     
- 
-    switch1 = [True, True, True, True, False, False, True, True]
+    if model_args.adapter_switch_type == "A4":
+        switch1 = [True, True, True, False, True, False, False, True]
+    elif model_args.adapter_switch_type == "A3":
+        switch1 = [True, True, True, True, True, False, False, True]
+    elif model_args.adapter_switch_type == "A2":
+        switch1 = [True, True, True, True, False, False, True, True]
+    elif model_args.adapter_switch_type == "A1":
+        switch1 = [True, True, True, False, False, False, True, True]
+        
     switches = list([switch1])
     base_dir = training_args.output_dir
     for switch in switches:
