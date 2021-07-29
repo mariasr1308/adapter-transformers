@@ -350,7 +350,7 @@ def main():
                 use_auth_token=True if model_args.use_auth_token else None,
             )
             tokenizer = AutoTokenizer.from_pretrained(
-                "config.json",
+                "files/",
 #                 model_args.tokenizer_name if model_args.tokenizer_name else model_args.model_name_or_path,
                 cache_dir=model_args.cache_dir,
                 use_fast=True,
@@ -664,7 +664,7 @@ def main():
                 use_auth_token=True if model_args.use_auth_token else None,
                 )
                 tokenizer = AutoTokenizer.from_pretrained(
-                    "config.json",
+                    "files/",
 #                     model_args.tokenizer_name if model_args.tokenizer_name else model_args.model_name_or_path,
                     cache_dir=model_args.cache_dir,
                     use_fast=True,
