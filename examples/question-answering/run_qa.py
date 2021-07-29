@@ -343,7 +343,8 @@ def main():
             # The .from_pretrained methods guarantee that only one local process can concurrently
             # download model & vocab.
             config = AutoConfig.from_pretrained(
-                model_args.config_name if model_args.config_name else model_args.model_name_or_path,
+                "config.json",
+#                 model_args.config_name if model_args.config_name else model_args.model_name_or_path,
                 cache_dir=model_args.cache_dir,
                 revision=model_args.model_revision,
                 use_auth_token=True if model_args.use_auth_token else None,
